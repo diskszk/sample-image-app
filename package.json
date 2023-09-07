@@ -1,0 +1,10 @@
+{
+  "name": "sample-image-app",
+  "version": "1.0.0",
+  "author": "diskszk <ibalucky23@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "app/*"
+  ]
+}
