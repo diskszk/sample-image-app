@@ -6,5 +6,9 @@
   "private": true,
   "workspaces": [
     "app/*"
-  ]
+  ],
+  "scripts": {
+    "dev:client": "yarn workspace client dev",
+    "dev:server": "yarn workspace server nest start --watch"
+  }
 }

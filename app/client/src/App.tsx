@@ -1,33 +1,62 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
+import { useRef, useState } from "react";
+import { createUploadImage } from "./fetcher";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [previewImage, setPreviewImage] = useState("");
+  const inputFileRef = useRef<HTMLInputElement>(null);
+
+  const handleChangePreview = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    if (!ev.target.files) {
+      return;
+    }
+    const file = ev.target.files[0];
+
+    setPreviewImage(URL.createObjectURL(file));
+  };
+
+  const [load, setLoad] = useState(false);
+
+  const handleClickUpload = async () => {
+    const fileList = inputFileRef.current?.files;
+
+    if (!fileList || !fileList.length) {
+      return;
+    }
+    const file = fileList[0];
+    setLoad(true);
+    const res = await createUploadImage(file);
+    console.log(res);
+    setLoad(false);
+  };
+
+  if (load) {
+    return <h2>Loading...</h2>;
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <h2 className="text-3xl font-bold">画像をアップロード</h2>
+      <div className="flex justify-center items-center mt-8">
+        <img
+          src={previewImage}
+          alt="画像が選択されていません。"
+          className="h-32 w-32"
+        />
+        <input
+          type="file"
+          onChange={handleChangePreview}
+          ref={inputFileRef}
+          accept="image/*"
+          style={{ display: "none" }}
+        />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <button onClick={() => inputFileRef.current?.click()}>
+        ファイルを選択
+      </button>
+      {previewImage && (
+        <button onClick={handleClickUpload}>アップロードする</button>
+      )}
     </>
   );
 }
